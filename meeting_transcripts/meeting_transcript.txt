@@ -1,0 +1,32 @@
+[Meeting Transcript – Project Phoenix Kickoff]
+Date: April 20, 2025
+Time: 10:00 AM – 11:00 AM
+Participants: Alice (Project Manager), Bob (Frontend Dev), Carol (Backend Dev), Dave (QA)
+
+Alice:
+Good morning, everyone. Let’s get started on our Project Phoenix kickoff. The goal is to develop a web-based dashboard for real-time data visualization.
+
+Bob:
+Sounds great. What are the core features we want in the MVP?
+
+Alice:
+For now:
+1. User authentication
+2. Dashboard with live charts
+3. API integration for external data sources
+4. Admin panel for settings
+
+Carol:
+I can start working on the backend services and APIs. We’ll need endpoints for user login, data fetching, and admin controls.
+
+Dave:
+Once Carol has the initial endpoints ready, I’ll start writing test cases and set up the CI pipeline.
+
+Bob:
+Frontend side, I’ll begin with login and dashboard components. Will use React with Chart.js for the visualization.
+
+Alice:
+Perfect. Let’s outline action items.
+
+Alice:
+Thanks, everyone. Let’s reconvene next week and check progress.

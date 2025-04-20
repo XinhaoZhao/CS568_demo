@@ -1,0 +1,37 @@
+[Company Resources for Project Phoenix]
+
+1. Internal Documentation Portal
+   - URL: https://intranet.company.com/docs/phoenix
+   - Description: Central hub for all technical documentation, API specs, and architectural diagrams.
+
+2. Git Repository
+   - URL: https://git.company.com/project-phoenix
+   - Description: Contains source code for frontend, backend, and deployment scripts.
+   - Branching Strategy: main, dev, feature/*
+
+3. Design System
+   - URL: https://figma.com/company-phoenix-designs
+   - Description: UI/UX components, user flows, and visual guidelines for consistent frontend development.
+
+4. Slack Channel
+   - Channel: #proj-phoenix
+   - Description: Dedicated channel for daily updates, async discussions, and team collaboration.
+
+5. Task Management Board
+   - URL: https://jira.company.com/boards/phoenix
+   - Description: Tracks sprints, backlogs, tasks, and bugs using Scrum methodology.
+
+6. CI/CD Pipeline Access
+   - URL: https://jenkins.company.com/job/project-phoenix/
+   - Description: Jenkins jobs for build, test, and deployment automation.
+
+7. Data Source Registry
+   - URL: https://datahub.company.com/sources
+   - Description: Catalogue of all available external and internal data sources accessible via API.
+
+8. Access Management
+   - URL: https://access.company.com
+   - Description: Request and manage access to AWS, DBs, and services used in the project.
+
+[Note]
+For any access issues or onboarding support, reach out to Alice (Project Manager) or email it-support@company.com.
