@@ -98,28 +98,6 @@ http://localhost:5000
    - Company policies
    - Both meeting and company information
 
-## File Structure
-
-```
-meeting-transcript-analyzer/
-├── app.py                 # Main application file
-├── requirements.txt       # Python dependencies
-├── .env                  # Environment variables (API keys)
-├── meeting_transcripts/  # Directory for meeting transcripts
-├── company_resources/    # Directory for company resources
-└── templates/
-    └── index.html        # Main application template
-```
-
-## API Endpoints
-
-- `/api/initial-analysis`: Get initial analysis of transcripts
-- `/api/upload`: Upload new meeting transcript
-- `/api/company-resources`: Get list of company resources
-- `/api/company-resources/upload`: Upload new company resource
-- `/api/company-resources/<filename>`: Delete specific resource
-- `/api/chat`: Send chat messages and get responses
-
 ## Notes
 
 - Meeting transcripts should be in .txt format
