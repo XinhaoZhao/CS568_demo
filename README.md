@@ -32,7 +32,7 @@ A web application that analyzes meeting transcripts using AI to provide summarie
 1. Clone the repository:
 ```bash
 git clone [repository-url]
-cd meeting-transcript-analyzer
+cd CS568_demo
 ```
 
 2. Install required packages:
