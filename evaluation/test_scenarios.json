@@ -1,0 +1,58 @@
+{
+    "scenarios": [
+        {
+            "name": "Project Planning Meeting",
+            "transcript": "Team discussed the new product launch timeline. John mentioned we need to complete the UI design by next Friday. Sarah suggested we should also consider the marketing materials. Mike raised concerns about the current development timeline being too tight. The team agreed to review the sprint planning in the next meeting.",
+            "company_resources": [
+                "Project timeline guidelines: All major milestones should have at least 2 weeks buffer time.",
+                "Team communication policy: All decisions must be documented in the project management tool.",
+                "Development workflow: UI design must be approved before development starts."
+            ],
+            "query": "What are the key deadlines and concerns from the meeting?",
+            "baseline_response": "The meeting discussed product launch timeline. UI design deadline is next Friday. Development timeline concerns were raised.",
+            "our_tool_response": "Key deadlines: UI design completion by next Friday. Concerns: Development timeline is too tight. Action items: Review sprint planning in next meeting. Note: This timeline may need adjustment per company guidelines requiring 2-week buffer for milestones.",
+            "ground_truth": "The meeting identified UI design deadline (next Friday) and development timeline concerns. Team agreed to review sprint planning. This should be evaluated against company's 2-week buffer requirement for milestones.",
+            "queries": [
+                "What's the UI design deadline?",
+                "Are there any timeline concerns?",
+                "What was decided about the sprint planning?"
+            ]
+        },
+        {
+            "name": "Customer Support Escalation",
+            "transcript": "Critical issue reported by Enterprise client. System downtime affecting 1000+ users. Support team identified the root cause as database connection pool exhaustion. Emergency patch deployment scheduled for tonight. Team needs to prepare rollback plan and notify affected customers.",
+            "company_resources": [
+                "Incident response protocol: All critical issues must have a rollback plan before deployment.",
+                "Customer communication guidelines: Enterprise clients must be notified within 1 hour of incident detection.",
+                "Database maintenance procedures: Connection pool settings should be reviewed monthly."
+            ],
+            "query": "What's the emergency response plan and what procedures need to be followed?",
+            "baseline_response": "Emergency patch deployment tonight. Need rollback plan and customer notification.",
+            "our_tool_response": "Emergency Response: 1) Deploy patch tonight 2) Prepare rollback plan (required by protocol) 3) Notify Enterprise clients within 1 hour (per guidelines) 4) Review database connection pool settings (monthly procedure) 5) Document incident for post-mortem",
+            "ground_truth": "The emergency response includes patch deployment tonight with required rollback plan. Enterprise clients must be notified within 1 hour. Database connection pool settings need review. All actions must be documented for post-mortem analysis.",
+            "queries": [
+                "What's the deployment schedule?",
+                "What customer notifications are needed?",
+                "What follow-up actions are required?"
+            ]
+        },
+        {
+            "name": "Team Performance Review",
+            "transcript": "Quarterly performance review meeting. Team exceeded Q2 targets by 15%. Customer satisfaction scores improved by 20%. Areas for improvement identified in documentation and knowledge sharing. New training program proposed for Q3. Budget approval needed for team building activities.",
+            "company_resources": [
+                "Performance review guidelines: Document all improvement areas and create action plans.",
+                "Training budget policy: All training programs must be approved by department head.",
+                "Team building guidelines: Activities must align with company values and objectives."
+            ],
+            "query": "What were the key achievements and what improvements are planned?",
+            "baseline_response": "Team exceeded targets by 15%, customer satisfaction up 20%. Need improvement in documentation.",
+            "our_tool_response": "Achievements: 1) Exceeded Q2 targets by 15% 2) Customer satisfaction improved by 20% Improvements: 1) Documentation and knowledge sharing 2) New Q3 training program (pending budget approval) 3) Team building activities (to be aligned with company values)",
+            "ground_truth": "The team achieved 15% above targets and 20% improvement in customer satisfaction. Planned improvements include documentation, knowledge sharing, new training program, and team building activities. All improvements must follow company guidelines and budget approval processes.",
+            "queries": [
+                "What were the Q2 achievements?",
+                "What training is planned?",
+                "What budget approvals are needed?"
+            ]
+        }
+    ]
+} 
