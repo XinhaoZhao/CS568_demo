@@ -1,80 +1,80 @@
 # Meeting Analyzer Evaluation Report
-Generated on: 2025-05-04 19:02:43
+Generated on: 2025-05-04 20:39:30
 
 ## Executive Summary
-This report evaluates the Meeting Analyzer tool across three key metrics: knowledge relevance, decision accuracy, and time to insight. The evaluation was conducted using three real-world meeting scenarios to ensure comprehensive testing.
+This report evaluates the Meeting Analyzer tool across four key metrics: meeting knowledge relevance, resource relevance, decision accuracy, and time to insight. The evaluation was conducted using three real-world meeting scenarios to ensure comprehensive testing.
 
 ## Technical Methodology
-### Knowledge Relevance Measurement
-Knowledge relevance is calculated using TF-IDF (Term Frequency-Inverse Document Frequency) vectorization and cosine similarity:
-1. All texts (response, transcript, and company resources) are converted to TF-IDF vectors
-2. Cosine similarity is calculated between:
-   - Response and transcript
-   - Response and company resources
-3. Dynamic weights are calculated based on query relevance to each source
-4. Final score is a weighted average of these similarities, normalized using sigmoid scaling
+### Meeting Knowledge Relevance Measurement
+Meeting knowledge relevance is calculated using TF-IDF vectorization and cosine similarity:
+1. Meeting analysis and transcript are converted to TF-IDF vectors
+2. Cosine similarity is calculated between the meeting analysis and transcript
+3. Score represents how well the analysis captures the key points from the meeting
+
+### Resource Relevance Measurement
+Resource relevance is calculated using TF-IDF vectorization and cosine similarity:
+1. Response and company resources are converted to TF-IDF vectors
+2. Cosine similarity is calculated between the response and each resource
+3. Maximum similarity score represents how well the response utilizes available resources
 
 ### Decision Accuracy Measurement
-Decision accuracy improvement is measured by comparing our tool's responses against baseline tools:
-1. All responses (baseline, our tool, and ground truth) are converted to TF-IDF vectors
-2. Cosine similarity is calculated between:
-   - Baseline response and ground truth
-   - Our tool's response and ground truth
-3. Improvement ratio is calculated as: (our_similarity - baseline_similarity) / baseline_similarity
+Decision accuracy is measured by comparing our tool's responses with baseline responses:
+1. Both responses are converted to TF-IDF vectors
+2. Cosine similarity is calculated between the responses
+3. Score represents how well our tool's responses align with baseline responses
 
-### Time to Insight Measurement
-Time to insight is measured through simulated user interactions:
-1. Each scenario is tested 5 times to ensure statistical significance
-2. For each trial, we measure:
-   - Initial upload and analysis time (0.5s)
-   - Time for each query (0.3s thinking + 0.2s response)
-3. Statistics calculated include:
-   - Mean time across all trials
-   - Standard deviation
-   - Minimum and maximum times
+## Meeting Knowledge Relevance Scores
+Meeting knowledge relevance measures how well our tool's analysis captures the key points from the meeting transcript.
+Mean Score: 0.496
+Std Dev: 0.063
 
-## Knowledge Relevance Scores
-Knowledge relevance measures how well our tool's responses match the relevant information from both meeting transcripts and company resources.
-Mean Score: 0.741
-Std Dev: 0.104
+## Resource Relevance Scores
+Resource relevance measures how well our tool's responses utilize available company resources.
+Mean Score: 0.623
+Std Dev: 0.102
 
-## Decision Accuracy Improvement
-Decision accuracy improvement compares our tool's responses against baseline tools (Zoom+Confluence).
-Mean Improvement: 2.898
-Std Dev: 3.026
+## Decision Accuracy Scores
+Decision accuracy measures how well our tool's responses align with baseline responses.
+Mean Score: 0.312
+Std Dev: 0.052
 
 ## Time to Insight Metrics
 Time to insight measures how quickly users can get insights from the system.
-Mean Time: 2.00 seconds
+Mean Time: 1.00 seconds
 Std Dev: 0.00 seconds
 
 ## Detailed Scenario Analysis
 ### Project Planning Meeting
-**Query:** What are the key deadlines and concerns from the meeting?
-**Response Relevance Score:** 0.857
-**Accuracy Improvement:** 0.414
-**Average Time to Insight:** 2.00 seconds
+**Query:** What are some implementation notes?
+**Meeting Relevance Score:** 0.574
+**Resource Relevance Score:** 0.763
+**Accuracy Score:** 0.313
+**Average Time to Insight:** 1.00 seconds
 
 ### Customer Support Escalation
-**Query:** What's the emergency response plan and what procedures need to be followed?
-**Response Relevance Score:** 0.605
-**Accuracy Improvement:** 1.121
-**Average Time to Insight:** 2.00 seconds
+**Query:** Specify the ESCALATION PROCEDURES for me please.
+**Meeting Relevance Score:** 0.420
+**Resource Relevance Score:** 0.581
+**Accuracy Score:** 0.249
+**Average Time to Insight:** 1.00 seconds
 
 ### Team Performance Review
-**Query:** What were the key achievements and what improvements are planned?
-**Response Relevance Score:** 0.762
-**Accuracy Improvement:** 7.158
-**Average Time to Insight:** 2.00 seconds
+**Query:** Give me some support document please.
+**Meeting Relevance Score:** 0.492
+**Resource Relevance Score:** 0.525
+**Accuracy Score:** 0.375
+**Average Time to Insight:** 1.00 seconds
 
 ## Visualizations
 The following visualizations provide a graphical representation of the evaluation results:
-1. Response Relevance Scores by Scenario (knowledge_relevance.png)
-2. Decision Accuracy Improvement by Scenario (decision_accuracy.png)
-3. Time to Insight Distribution by Scenario (time_to_insight.png)
+1. Meeting Knowledge Relevance Scores by Scenario (knowledge_relevance.png)
+2. Resource Relevance Scores by Scenario (resource_relevance.png)
+3. Decision Accuracy Scores by Scenario (decision_accuracy.png)
+4. Time to Insight Distribution by Scenario (time_to_insight.png)
 
 ## Recommendations
 Based on the evaluation results, here are some recommendations for improvement:
-1. Focus on improving response relevance in complex scenarios
-2. Optimize response time for frequently asked questions
-3. Enhance decision accuracy in technical discussions
+1. Focus on improving meeting knowledge relevance in complex scenarios
+2. Enhance resource utilization in responses
+3. Optimize response time for frequently asked questions
+4. Improve alignment with baseline responses

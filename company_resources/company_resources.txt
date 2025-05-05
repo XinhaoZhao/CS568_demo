@@ -1,0 +1,7 @@
+IMPLEMENTATION NOTES
+This design system is implemented in our component library available at:
+design-system.nexuscorp.internal/mobile-components
+For React Native implementation guidance, refer to:
+confluence.nexuscorp.internal/mobile-design-system-implementation
+Version history and planned updates can be found at:
+confluence.nexuscorp.internal/design-system-roadmap
