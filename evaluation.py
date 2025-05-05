@@ -72,23 +72,20 @@ class MeetingAnalyzerEvaluator:
 
     def evaluate_decision_accuracy(self, 
                                  baseline_tool: str,
-                                 our_tool: str) -> float:
+                                 our_tool: str,
+                                 transcript: str) -> float:
         """
         Compare decision accuracy between baseline tools and our tool
-        by directly comparing responses
+        by calculating the difference in knowledge relevance scores
         """
-        # Vectorize all responses
-        all_texts = [baseline_tool, our_tool]
-        tfidf_matrix = self.vectorizer.fit_transform(all_texts)
+        # Calculate knowledge relevance for both responses
+        baseline_relevance = self.calculate_knowledge_relevance(transcript, baseline_tool)
+        our_relevance = self.calculate_knowledge_relevance(transcript, our_tool)
         
-        # Calculate similarities
-        baseline_vector = tfidf_matrix[0]
-        our_vector = tfidf_matrix[1]
+        # Calculate difference in knowledge relevance
+        accuracy_difference = our_relevance - baseline_relevance
         
-        # Calculate direct similarity score
-        similarity = cosine_similarity(baseline_vector, our_vector)[0][0]
-        
-        return similarity
+        return accuracy_difference
 
     def measure_time_to_insight(self, 
                               scenario: Dict,
@@ -145,11 +142,12 @@ class MeetingAnalyzerEvaluator:
             self.results['resource_relevance'].append(resource_relevance_score)
             
             # Decision accuracy evaluation
-            accuracy_score = self.evaluate_decision_accuracy(
+            accuracy_difference = self.evaluate_decision_accuracy(
                 scenario['baseline_meeting_analysis'],
-                scenario['our_tool_meeting_analysis']
+                scenario['our_tool_meeting_analysis'],
+                scenario['transcript']
             )
-            self.results['decision_accuracy'].append(accuracy_score)
+            self.results['decision_accuracy'].append(accuracy_difference)
             
             # Time to insight evaluation
             time_metrics = self.measure_time_to_insight(scenario)
@@ -161,7 +159,7 @@ class MeetingAnalyzerEvaluator:
                 'query': scenario['query'],
                 'meeting_relevance_score': meeting_relevance_score,
                 'resource_relevance_score': resource_relevance_score,
-                'accuracy_score': accuracy_score,
+                'accuracy_difference': accuracy_difference,
                 'time_metrics': time_metrics
             })
 
@@ -195,13 +193,13 @@ class MeetingAnalyzerEvaluator:
         plt.savefig('evaluation/visualizations/resource_relevance.png')
         plt.close()
         
-        # 3. Decision Accuracy Bar Chart
+        # 3. Decision Accuracy Difference Bar Chart
         plt.figure(figsize=(10, 6))
-        accuracy_scores = [s['accuracy_score'] for s in self.results['scenario_details']]
-        plt.bar(scenarios, accuracy_scores)
-        plt.title('Decision Accuracy Scores by Scenario')
+        accuracy_differences = [s['accuracy_difference'] for s in self.results['scenario_details']]
+        plt.bar(scenarios, accuracy_differences)
+        plt.title('Decision Accuracy Difference by Scenario')
         plt.xticks(rotation=45)
-        plt.ylabel('Accuracy Score')
+        plt.ylabel('Accuracy Difference')
         plt.tight_layout()
         plt.savefig('evaluation/visualizations/decision_accuracy.png')
         plt.close()
@@ -249,9 +247,9 @@ class MeetingAnalyzerEvaluator:
         
         report.append("### Decision Accuracy Measurement")
         report.append("Decision accuracy is measured by comparing our tool's responses with baseline responses:")
-        report.append("1. Both responses are converted to TF-IDF vectors")
-        report.append("2. Cosine similarity is calculated between the responses")
-        report.append("3. Score represents how well our tool's responses align with baseline responses\n")
+        report.append("1. Calculate knowledge relevance score for baseline response")
+        report.append("2. Calculate knowledge relevance score for our tool's response")
+        report.append("3. Difference represents how much better/worse our tool performs in capturing meeting knowledge\n")
         
         # Knowledge Relevance Results
         report.append("## Meeting Knowledge Relevance Scores")
@@ -266,9 +264,12 @@ class MeetingAnalyzerEvaluator:
         report.append(f"Std Dev: {np.std(self.results['resource_relevance']):.3f}\n")
         
         # Decision Accuracy Results
-        report.append("## Decision Accuracy Scores")
-        report.append("Decision accuracy measures how well our tool's responses align with baseline responses.")
-        report.append(f"Mean Score: {np.mean(self.results['decision_accuracy']):.3f}")
+        report.append("## Decision Accuracy Difference")
+        report.append("Decision accuracy difference measures how our tool's responses compare to baseline responses:")
+        report.append("1. Calculate knowledge relevance score for baseline response")
+        report.append("2. Calculate knowledge relevance score for our tool's response")
+        report.append("3. Difference represents how much better/worse our tool performs in capturing meeting knowledge\n")
+        report.append(f"Mean Difference: {np.mean(self.results['decision_accuracy']):.3f}")
         report.append(f"Std Dev: {np.std(self.results['decision_accuracy']):.3f}\n")
         
         # Time to Insight Results
@@ -285,7 +286,7 @@ class MeetingAnalyzerEvaluator:
             report.append(f"**Query:** {scenario['query']}")
             report.append(f"**Meeting Relevance Score:** {scenario['meeting_relevance_score']:.3f}")
             report.append(f"**Resource Relevance Score:** {scenario['resource_relevance_score']:.3f}")
-            report.append(f"**Accuracy Score:** {scenario['accuracy_score']:.3f}")
+            report.append(f"**Accuracy Difference:** {scenario['accuracy_difference']:.3f}")
             report.append(f"**Average Time to Insight:** {scenario['time_metrics']['mean_time']:.2f} seconds\n")
         
         # Visualizations
@@ -293,7 +294,7 @@ class MeetingAnalyzerEvaluator:
         report.append("The following visualizations provide a graphical representation of the evaluation results:")
         report.append("1. Meeting Knowledge Relevance Scores by Scenario (knowledge_relevance.png)")
         report.append("2. Resource Relevance Scores by Scenario (resource_relevance.png)")
-        report.append("3. Decision Accuracy Scores by Scenario (decision_accuracy.png)")
+        report.append("3. Decision Accuracy Difference by Scenario (decision_accuracy.png)")
         report.append("4. Time to Insight Distribution by Scenario (time_to_insight.png)\n")
         
         # Recommendations
