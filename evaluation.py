@@ -33,25 +33,93 @@ class MeetingAnalyzerEvaluator:
     def calculate_knowledge_relevance(self, 
                                    transcript: str, 
                                    company_resources: List[str],
-                                   query: str) -> float:
+                                   query: str,
+                                   our_tool_response: str) -> float:
         """
-        Calculate knowledge relevance score using TF-IDF similarity
+        Calculate knowledge relevance score using enhanced TF-IDF similarity and semantic analysis
+        Measures how well our response matches the relevant information in transcripts and resources
         """
+        # Preprocess texts
+        def preprocess_text(text):
+            # Convert to lowercase
+            text = text.lower()
+            # Remove special characters but keep important punctuation
+            text = ''.join(c for c in text if c.isalnum() or c.isspace() or c in '.,!?')
+            return text
+
+        # Preprocess all texts
+        processed_query = preprocess_text(query)
+        processed_response = preprocess_text(our_tool_response)
+        processed_transcript = preprocess_text(transcript)
+        processed_resources = [preprocess_text(resource) for resource in company_resources]
+
+        # Initialize TF-IDF vectorizer with improved parameters
+        self.vectorizer = TfidfVectorizer(
+            stop_words='english',
+            ngram_range=(1, 2),  # Use both unigrams and bigrams
+            min_df=2,  # Minimum document frequency
+            max_df=0.95,  # Maximum document frequency
+            sublinear_tf=True  # Apply sublinear scaling to term frequencies
+        )
+
         # Combine all texts for vectorization
-        all_texts = [query, transcript] + company_resources
+        all_texts = [processed_response, processed_transcript] + processed_resources
         tfidf_matrix = self.vectorizer.fit_transform(all_texts)
         
         # Calculate similarities
-        query_vector = tfidf_matrix[0]
+        response_vector = tfidf_matrix[0]
         transcript_vector = tfidf_matrix[1]
         resource_vectors = tfidf_matrix[2:]
         
-        # Calculate similarities
-        transcript_similarity = cosine_similarity(query_vector, transcript_vector)[0][0]
-        resource_similarities = cosine_similarity(query_vector, resource_vectors)[0]
+        # Calculate base similarities
+        transcript_similarity = cosine_similarity(response_vector, transcript_vector)[0][0]
+        resource_similarities = cosine_similarity(response_vector, resource_vectors)[0]
         
-        # Combine scores (weighted average)
-        return 0.7 * transcript_similarity + 0.3 * np.max(resource_similarities)
+        # Calculate query relevance to determine dynamic weights
+        query_vector = self.vectorizer.transform([processed_query])
+        query_transcript_similarity = cosine_similarity(query_vector, transcript_vector)[0][0]
+        query_resource_similarities = cosine_similarity(query_vector, resource_vectors)[0]
+        
+        # Handle potential NaN values
+        transcript_similarity = np.nan_to_num(transcript_similarity, nan=0.0)
+        resource_similarities = np.nan_to_num(resource_similarities, nan=0.0)
+        query_transcript_similarity = np.nan_to_num(query_transcript_similarity, nan=0.0)
+        query_resource_similarities = np.nan_to_num(query_resource_similarities, nan=0.0)
+        
+        # Calculate dynamic weights based on query relevance
+        total_query_similarity = query_transcript_similarity + np.max(query_resource_similarities)
+        
+        # Use default weights if no similarity is found
+        if total_query_similarity <= 0:
+            transcript_weight = 0.7
+            resource_weight = 0.3
+        else:
+            # Calculate weights with epsilon to prevent division by zero
+            epsilon = 1e-10
+            transcript_weight = query_transcript_similarity / (total_query_similarity + epsilon)
+            resource_weight = np.max(query_resource_similarities) / (total_query_similarity + epsilon)
+            
+            # Normalize weights to sum to 1
+            total_weight = transcript_weight + resource_weight
+            if total_weight > 0:
+                transcript_weight /= total_weight
+                resource_weight /= total_weight
+            else:
+                transcript_weight = 0.7
+                resource_weight = 0.3
+        
+        # Calculate final score with dynamic weights
+        final_score = (transcript_weight * transcript_similarity + 
+                      resource_weight * np.max(resource_similarities))
+        
+        # Apply sigmoid scaling to normalize score between 0 and 1
+        final_score = 1 / (1 + np.exp(-5 * (final_score - 0.5)))
+        
+        # Ensure final score is valid
+        if np.isnan(final_score):
+            return 0.0
+        
+        return float(final_score)
 
     def evaluate_decision_accuracy(self, 
                                  baseline_tool: str,
@@ -120,7 +188,8 @@ class MeetingAnalyzerEvaluator:
             relevance_score = self.calculate_knowledge_relevance(
                 scenario['transcript'],
                 scenario['company_resources'],
-                scenario['query']
+                scenario['query'],
+                scenario['our_tool_response']
             )
             self.results['knowledge_relevance'].append(relevance_score)
             
@@ -208,11 +277,12 @@ class MeetingAnalyzerEvaluator:
         report.append("## Technical Methodology")
         report.append("### Knowledge Relevance Measurement")
         report.append("Knowledge relevance is calculated using TF-IDF (Term Frequency-Inverse Document Frequency) vectorization and cosine similarity:")
-        report.append("1. All texts (query, transcript, and company resources) are converted to TF-IDF vectors")
+        report.append("1. All texts (response, transcript, and company resources) are converted to TF-IDF vectors")
         report.append("2. Cosine similarity is calculated between:")
-        report.append("   - Query and transcript (70% weight)")
-        report.append("   - Query and company resources (30% weight)")
-        report.append("3. Final score is a weighted average of these similarities\n")
+        report.append("   - Response and transcript")
+        report.append("   - Response and company resources")
+        report.append("3. Dynamic weights are calculated based on query relevance to each source")
+        report.append("4. Final score is a weighted average of these similarities, normalized using sigmoid scaling\n")
         
         report.append("### Decision Accuracy Measurement")
         report.append("Decision accuracy improvement is measured by comparing our tool's responses against baseline tools:")
@@ -235,7 +305,7 @@ class MeetingAnalyzerEvaluator:
         
         # Knowledge Relevance Results
         report.append("## Knowledge Relevance Scores")
-        report.append("Knowledge relevance measures how well the system matches user queries with relevant information from both meeting transcripts and company resources.")
+        report.append("Knowledge relevance measures how well our tool's responses match the relevant information from both meeting transcripts and company resources.")
         report.append(f"Mean Score: {np.mean(self.results['knowledge_relevance']):.3f}")
         report.append(f"Std Dev: {np.std(self.results['knowledge_relevance']):.3f}\n")
         
@@ -257,21 +327,21 @@ class MeetingAnalyzerEvaluator:
         for scenario in self.results['scenario_details']:
             report.append(f"### {scenario['name']}")
             report.append(f"**Query:** {scenario['query']}")
-            report.append(f"**Relevance Score:** {scenario['relevance_score']:.3f}")
+            report.append(f"**Response Relevance Score:** {scenario['relevance_score']:.3f}")
             report.append(f"**Accuracy Improvement:** {scenario['accuracy_improvement']:.3f}")
             report.append(f"**Average Time to Insight:** {scenario['time_metrics']['mean_time']:.2f} seconds\n")
         
         # Visualizations
         report.append("## Visualizations")
         report.append("The following visualizations provide a graphical representation of the evaluation results:")
-        report.append("1. Knowledge Relevance Scores by Scenario (knowledge_relevance.png)")
+        report.append("1. Response Relevance Scores by Scenario (knowledge_relevance.png)")
         report.append("2. Decision Accuracy Improvement by Scenario (decision_accuracy.png)")
         report.append("3. Time to Insight Distribution by Scenario (time_to_insight.png)\n")
         
         # Recommendations
         report.append("## Recommendations")
         report.append("Based on the evaluation results, here are some recommendations for improvement:")
-        report.append("1. Focus on improving knowledge relevance in complex scenarios")
+        report.append("1. Focus on improving response relevance in complex scenarios")
         report.append("2. Optimize response time for frequently asked questions")
         report.append("3. Enhance decision accuracy in technical discussions")
         
